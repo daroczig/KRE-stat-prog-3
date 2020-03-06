@@ -43,6 +43,7 @@ merge(bookings, features, by = 'hotel_id')[country == 'Hungary'][, sum(nnights)]
 
 ## 12. Compute the average number of nights per booking in Hungary
 merge(bookings, features, by = 'hotel_id')[country == 'Hungary'][, mean(nnights)]
+<<<<<<< HEAD
 
 ## TODO push to git, create PR to merge homework
 ## TODO comment on PR, get some updates, merge, then fix locally (overwrite with copy/paste)
