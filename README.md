@@ -91,6 +91,26 @@ Optional homework:
 11. Count the number of nights booked in Hungary
 12. Compute the average number of nights per booking in Hungary
 
+### Week 2
+
+1. Git and GitHub: commits, branches, forking, RStudio projects, pushing and pulling, pull requests, merging
+2. Solutions to the 1st week's homeworks [2.R](2.R#L1)
+3. R markdown [2.Rmd](2.Rmd)
+4. Anscombe's quartett [2.R](2.R#50)
+5. Datasaurus [2.R](2.R#115)
+6. Tweaking `ggplot2` themes [2.R](2.R#161)
+
+Optional homework:
+
+1. Create an R markdown document visualizing the association between the variables of http://bit.ly/CEU-R-numbers
+2. Create an R markdown document with at least 5 different approaches on visualizing the association between the variables of http://bit.ly/CEU-R-numbers-set
+
+Preparations for the next week:
+
+* please ensure that Java is installed on your computer
+* install the `h2o` R package from CRAN
+
+### Week 3
 ## Contact
 
 File a [GitHub ticket](https://github.com/daroczig/KRE-stat-prog-3/issues).
