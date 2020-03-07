@@ -111,6 +111,10 @@ Preparations for the next week:
 * install the `h2o` R package from CRAN
 
 ### Week 3
+
+To be uploaded after the class.
+
+
 ## Contact
 
 File a [GitHub ticket](https://github.com/daroczig/KRE-stat-prog-3/issues).
