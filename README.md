@@ -7,6 +7,8 @@ This is the R script repository of the "Statisztikai programozás III." course i
 * [Class Schedule](https://github.com/daroczig/KRE-stat-prog-3#class-schedule)
 
     * [Week 1](https://github.com/daroczig/KRE-stat-prog-3#week-1)
+    * [Week 2](https://github.com/daroczig/KRE-stat-prog-3#week-2)
+    * [Week 3](https://github.com/daroczig/KRE-stat-prog-3#week-3)
 
 * [Contact](https://github.com/daroczig/KRE-stat-prog-3#contacts)
 
@@ -105,12 +107,44 @@ Optional homework:
 1. Create an R markdown document visualizing the association between the variables of http://bit.ly/CEU-R-numbers
 2. Create an R markdown document with at least 5 different approaches on visualizing the association between the variables of http://bit.ly/CEU-R-numbers-set
 
+### Week 3
+
+1. Alternatives to boxplot [3.R](3.R#1)
+2. Interactive plots [3.R](3.R#54)
+3. Introduction to Shiny [3.R](3.R#97)
+3. Processing data loaded from the Internet:
+
+    * We have 0.42 Bitcoin -- let's report on the value in USD [3.R](3.R#210)
+    * Let's report on the value in HUF [3.R](3.R#220)
+    * Let's report on the value in HUF for the past 30 days [3.R](3.R#210)
+    * Let's report on the value in HUF for the past 30 days (keeping in mind that USDHUF rate also changed) [3.R](3.R#323)
+    * Now We have 0.42 Bitcoin and 1.2 Ethereum, let's report on the value in HUF for the past 30 days (eg stacked barchart) [3.R](3.R#394)
+
+Optional homework:
+
+1. Create an account at https://remotemysql.com
+2. Create a database and check out via the PhpMyAdmin app
+3. Note the database name, username, password and create a database config YAML file to be used by the `dbr` package, eg something like
+
+    ```yaml
+    remotemysql:
+      host: remotemysql.com
+      port: 3306
+      dbname: ***
+      user: ***
+      drv: !expr RMySQL::MySQL()
+      password: ***
+    ```
+
+4. Read the number of Bitcoin and Ethereum from the database and report on the value of those in the past 30 days [3-homework.R](3-homework.R#1)
+5. Instead of reading a static balance, fetch the cryptocurrency exchange transactions to do the above report [3-homework.R](3-homework.R#73)
+
 Preparations for the next week:
 
 * please ensure that Java is installed on your computer
 * install the `h2o` R package from CRAN
 
-### Week 3
+### Week 4
 
 To be uploaded after the class.
 
