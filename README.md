@@ -9,6 +9,7 @@ This is the R script repository of the "Statisztikai programozás III." course i
     * [Week 1](https://github.com/daroczig/KRE-stat-prog-3#week-1)
     * [Week 2](https://github.com/daroczig/KRE-stat-prog-3#week-2)
     * [Week 3](https://github.com/daroczig/KRE-stat-prog-3#week-3)
+    * [Week 4](https://github.com/daroczig/KRE-stat-prog-3#week-4)
 
 * [Contact](https://github.com/daroczig/KRE-stat-prog-3#contacts)
 
@@ -145,6 +146,388 @@ Preparations for the next week:
 * install the `h2o` R package from CRAN
 
 ### Week 4
+
+We have 0.42 Bitcoin. Let's write an R script reporting on the current value of this asset in USD.
+
+<details>
+  <summary>Click here for a potential solution ...</summary>
+
+```r
+library(devtools)
+install_github('daroczig/binancer')
+
+library(binancer)
+coin_prices <- binance_ticker_all_prices()
+
+library(data.table)
+coin_prices[from == 'BTC' & to == 'USDT', to_usd]
+
+## alternative solution
+coin_prices <- binance_coins_prices()
+coin_prices[symbol == 'BTC', usd]
+
+## don't forget that we need to report on the price of 0.42 BTC instead of 1 BTC
+coin_prices[symbol == 'BTC', usd * 0.42]
+```
+
+</details>
+
+Let's do the same report as above, but instead of USD, now let's report in Hungarian Forints.
+
+<details>
+  <summary>Click here for a potential solution ...</summary>
+
+```r
+## How to get USD/HUF rate?
+## See eg https://exchangeratesapi.io for free API access
+
+## Loading data without any dependencies
+https://api.exchangeratesapi.io/latest
+https://api.exchangeratesapi.io/latest?base=USD
+
+readLines('https://api.exchangeratesapi.io/latest?base=USD')
+
+## Parse JSON
+library(jsonlite)
+fromJSON(readLines('https://api.exchangeratesapi.io/latest?base=USD'))
+fromJSON('https://api.exchangeratesapi.io/latest?base=USD')
+
+## Extract the USD/HUF exchange rate from the list
+usdhuf <- fromJSON('https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF')$rates$HUF
+coin_prices[symbol == 'BTC', 0.42 * usd * usdhuf]
+```
+
+</details>
+
+<details>
+  <summary>Click here for a potential solution ... after cleaning up</summary>
+
+```r
+## loading requires packages on the top of the script
+library(binancer)
+library(httr)
+
+## constants
+BITCOINS <- 0.42
+
+## get Bitcoin price in USD
+coin_prices <- binance_coins_prices()
+btcusdt <- coin_prices[symbol == 'BTC', usd]
+
+## get USD/HUF exchange rate
+usdhuf <- fromJSON('https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF')$rates$HUF
+
+## report
+BITCOINS * btcusdt * usdhuf
+```
+
+</details>
+
+<details>
+  <summary>Click here for a potential solution ... with logging</summary>
+
+```r
+library(binancer)
+library(httr)
+library(data.table)
+library(logger)
+
+BITCOINS <- 0.42
+
+coin_prices <- binance_coins_prices()
+log_info('Found {coin_prices[, .N]} coins on Binance')
+btcusdt <- coin_prices[symbol == 'BTC', usd]
+log_info('The current Bitcoin price is ${btcusdt}')
+
+usdhuf <- fromJSON('https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF')$rates$HUF
+log_info('1 USD currently costs {usdhuf} Hungarian Forints')
+
+log_eval(forint(BITCOINS * btcusdt * usdhuf), level = INFO)
+log_info('{BITCOINS} Bitcoins now worth {round(btcusdt * usdhuf * BITCOINS)} HUF')
+```
+
+</details>
+
+<details>
+  <summary>Click here for a potential solution ... with validating values received from the API</summary>
+
+```r
+library(binancer)
+library(httr)
+library(data.table)
+library(logger)
+library(checkmate)
+
+BITCOINS <- 0.42
+
+coin_prices <- binance_coins_prices()
+log_info('Found {coin_prices[, .N]} coins on Binance')
+btcusdt <- coin_prices[symbol == 'BTC', usd]
+log_info('The current Bitcoin price is ${btcusdt}')
+assert_number(btcusdt, lower = 1000)
+
+usdhuf <- fromJSON('https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF')$rates$HUF
+log_info('1 USD currently costs {usdhuf} Hungarian Forints')
+assert_number(usdhuf, lower = 250, upper = 500)
+
+log_info('{BITCOINS} Bitcoins now worth {round(btcusdt * usdhuf * BITCOINS)} HUF')
+```
+
+</details>
+
+<details>
+  <summary>Click here for a potential solution ... with auto-retries for API errors</summary>
+
+```r
+library(binancer)
+library(httr)
+library(data.table)
+library(logger)
+library(checkmate)
+
+BITCOINS <- 0.42
+
+get_bitcoin_price <- function() {
+  tryCatch(
+    binance_coins_prices()[symbol == 'BTC', usd],
+    error = function(e) get_bitcoin_price())
+}
+
+btcusdt <- get_bitcoin_price()
+log_info('The current Bitcoin price is ${btcusdt}')
+assert_number(btcusdt, lower = 1000)
+
+usdhuf <- fromJSON('https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF')$rates$HUF
+log_info('1 USD currently costs {usdhuf} Hungarian Forints')
+assert_number(usdhuf, lower = 250, upper = 500)
+
+log_info('{BITCOINS} Bitcoins now worth {round(btcusdt * usdhuf * BITCOINS)} HUF')
+```
+
+</details>
+
+<details>
+  <summary>Click here for a potential solution ... with auto-retries for API errors with exponential backoff</summary>
+
+```r
+library(binancer)
+library(httr)
+library(data.table)
+library(logger)
+library(checkmate)
+
+BITCOINS <- 0.42
+
+get_bitcoin_price <- function(retried = 0) {
+  tryCatch(
+    binance_coins_prices()[symbol == 'BTC', usd],
+    error = function(e) {
+      ## exponential backoff retries
+      Sys.sleep(1 + retried^2)
+      get_bitcoin_price(retried = retried + 1)
+    })
+}
+
+btcusdt <- get_bitcoin_price()
+log_info('The current Bitcoin price is ${btcusdt}')
+assert_number(btcusdt, lower = 1000)
+
+usdhuf <- fromJSON('https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF')$rates$HUF
+log_info('1 USD currently costs {usdhuf} Hungarian Forints')
+assert_number(usdhuf, lower = 250, upper = 500)
+
+log_info('{BITCOINS} Bitcoins now worth {round(btcusdt * usdhuf * BITCOINS)} HUF')
+```
+
+</details>
+
+<details>
+  <summary>Click here for a potential solution ... with better currency formatter</summary>
+
+```r
+round(btcusdt * usdhuf * BITCOINS)
+format(btcusdt * usdhuf * BITCOINS, big.mark = ',', digits = 10)
+format(btcusdt * usdhuf * BITCOINS, big.mark = ',', digits = 6)
+
+library(scales)
+dollar(btcusdt * usdhuf * BITCOINS)
+dollar(btcusdt * usdhuf * BITCOINS, prefix = '', suffix = ' HUF')
+
+forint <- function(x) {
+  dollar(x, prefix = '', suffix = ' HUF')
+}
+forint(btcusdt * usdhuf * BITCOINS)
+```
+
+</details>
+
+To move the helper function into their own package:
+
+    1. Click File / New Project / New folder and create a new R package (maybe call it `btc`, also create a git repo for it) -- that will fill in your newly created folder with a package skeleton delivering the `hello` function in the `hello.R` file.
+
+    2. Get familiar with:
+
+        * the `DESCRIPTION` file
+
+            * semantic versioning: https://semver.org
+            * open-source license, see eg http://r-pkgs.had.co.nz/description.html#license or https://rstats-pkgs.readthedocs.io/en/latest/licensing.html
+
+        * the `R` subfolder
+        * the `man` subfolder
+        * the `NAMESPACE` file
+
+    3. Install the package (in the Build menu), load it and try `hello()`, then `?hello`
+    4. Create a git repo (if not done that already) and add/commit this package skeleton
+    5. Add a new function called `forint` in the `R` subfolder:
+
+        <details>
+          <summary><code>forint.R</code></summary>
+
+        ```r
+        forint <- function(x) {
+          dollar(x, prefix = '', suffix = ' HUF')
+        }
+        ```
+
+        </details>
+
+    6. Install the package, re-load it, and try running `forint` eg calling on `42` -- realize it's failing
+    7. After loading the `scales` package (that delivers the `dollar` function), it works ... we need to prepare our package to load `scales::dollar` without user interventation
+    8. Also, look at the docs of `forint` -- realize it's missing, so let's learn about `roxygen2` and update the `forint.R` file to explicitely list the function to be exported and note that `dollar` is to be imported from the `scales` package:
+
+        <details>
+          <summary><code>forint.R</code></summary>
+
+        ```r
+        #' Formats Hungarian Forint
+        #' @param x number
+        #' @return string
+        #' @export
+        #' @importFrom scales dollar
+        #' @examples
+        #' forint(100000)
+        #' forint(10.3241245125125)
+        forint <- function(x) {
+          dollar(x, prefix = '', suffix = ' HUF')
+        }
+        ```
+
+        </details>
+
+    9. Run `roxygen2` on the package by enabling it in the "Build" menu's "Configure Build Tools", then "Document" it (if there's no such option, probably you need to install the `roxygen2` package first), and make sure to check what changes happened in the `man`, `NAMESPACE` (you might need to delete the original one) and `DESCRIPTION` files. It's also a good idea to automatically run `roxygen2` before each install, so I'd suggests marking that option as well. The resulting files should look something like:
+
+        <details>
+          <summary><code>DESCRIPTION</code></summary>
+
+        ```
+        Package: btc
+        Type: Package
+        Title:  functions for Bitcoin
+        Version: 0.1.0
+        Author: Gergely <***@***.***>
+        Maintainer: Gergely <***@***.***>
+        Description:  functions for Bitcoin
+        License: GPL-3
+        Encoding: UTF-8
+        LazyData: true
+        RoxygenNote: 7.1.0
+        Imports: scales
+        ```
+
+        </details>
+
+        <details>
+          <summary><code>NAMESPACE</code></summary>
+
+        ```
+        # Generated by roxygen2: do not edit by hand
+
+        export(forint)
+        importFrom(scales,dollar)
+        ```
+
+        </details>
+
+    10. Keep committing to the git repo
+    11. Delete `hello.R` and rerun `roxygen2` / reinstall the package
+    12. Add a new function that gets the most recent price of a Bitcoin and HUF in USD with retries:
+
+        <details>
+          <summary><code>get_bitcoin_price.R</code></summary>
+
+        ```r
+        #' Get BTC price
+        #' @param retried number of times previously retried (and failed) the API query
+        #' @return number
+        #' @export
+        #' @importFrom binancer binance_coins_prices
+        #' @importFrom checkmate assert_number
+        #' @importFrom logger log_info log_error
+        get_bitcoin_price <- function(retried = 0) {
+          tryCatch({
+            ## fall back to data.frame syntax not to load data.table
+            btcusd <- subset(binance_coins_prices(), symbol == 'BTC')$usd
+            assert_number(btcusd, lower = 3000, upper = 10000)
+            log_info('Current price of a BTC is {dollar(btcusd)}')
+            btcusd
+          },
+          error = function(e) {
+            log_error(e$message)
+            if (retried > 5) {
+              stop('gave up')
+            }
+            Sys.sleep(1 + retried^2)
+            get_bitcoin_price(retried = retried + 1)
+          }
+          )
+        }
+        ```
+
+        </details>
+
+        <details>
+          <summary><code>get_usdhuf.R</code></summary>
+
+        ```r
+        #' Get USD/HUF rate
+        #' @return number
+        #' @importFrom httr GET content
+        #' @importFrom logger log_info
+        #' @export
+        get_usdhuf <- function() {
+          usdhuf <- content(GET('https://api.exchangeratesapi.io/latest?base=USD'))$rates$HUF
+          log_info('Current USD/HUF rate is {usdhuf}')
+          usdhuf
+        }
+        ```
+
+        </details>
+
+    13. Now you can run the original R script hitting the Binance and ExchangeRatesAPI by using these helper functions:
+
+    ```r
+    library(binancer)
+    library(jsonlite)
+    library(logger)
+    library(checkmate)
+    library(scales)
+    log_threshold(TRACE)
+    library(btc)
+
+    BITCOINS <- 0.42
+    log_info('Number of Bitoins: {BITCOINS}')
+
+    btcusd <- get_bitcoin_price()
+    usdhuf <- get_usdhuf()
+    log_eval(forint(BITCOINS * btcusd * usdhuf))
+    ```
+
+Introduction to time-series modeling and forecasting: [4.R](4.R)
+
+Suggested reading:
+
+* http://happygitwithr.com
+* https://otexts.org/fpp2
 
 To be uploaded after the class.
 
