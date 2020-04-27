@@ -529,8 +529,20 @@ Suggested reading:
 * http://happygitwithr.com
 * https://otexts.org/fpp2
 
+### Week 5
+
 To be uploaded after the class.
 
+
+## Home Assignment
+
+1. Create an R package with an open-source license and push to a public GitHub repo
+2. Add a function called `usd_rate` that looks up the most recent USD exchange rate for the provided `currency` parameter (defaults to `EUR`) via an exchangeratesapi.io API call and returns the rate as a number
+3. Add `convert_usd_to_eur` function that calls `usd_rate` to compute and return the provided USD `amount` in EUR (as a number)
+4. Add `eur` function to the package, similar to `scales::dollar`, that formats a number to a string using the Euro sign, rounding up to 2 digits and using the comma as the `big.mark` (every 3 decimals)
+5. Write a function that reverses `eur`, eg call it `uneur`, so it takes a string (eg `"-€0.10"`) and transforms to a number (eg `-0.10` in this case). Make sure it works with the "big mark" as well (eg for `"€100,000"`)
+6. Read http://r-pkgs.had.co.nz/tests.html and write unit tests for `uneur` to make sure it can parse `€4`, `-€2`, `€0.00`, `-€42`, `€3,423.42`
+7. Create a screenshot on the results of running the unit tests and share along with the GitHub repo URL on Neptun
 
 ## Contact
 
