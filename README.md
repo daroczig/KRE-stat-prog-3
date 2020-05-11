@@ -1083,7 +1083,7 @@ Slides at http://bit.ly/satrday-la-2018-daroczig
 3. Let's install `boto3` Python module and use via `reticulate`:
 
     ```shell
-    sudo apt install python4-pip
+    sudo apt install python3-pip
     sudo pip3 install boto3
     sudo Rscript -e "withr::with_libpaths(new = '/usr/local/lib/R/site-library', install.packages('reticulate', repos='https://cran.rstudio.com/'))"
     sudo Rscript -e "library(devtools);withr::with_libpaths(new = '/usr/local/lib/R/site-library', install_github('daroczig/botor', upgrade_dependencies = FALSE))"
