@@ -1119,6 +1119,11 @@ ssm_get_parameter('foobar')
 * Create a Jenkins job to alert if Bitcoin price changed more than 5% in the past day
 * Create a Jenkins job running hourly to generate a candlestick chart on the price of BTC and ETH
 
+#### Decision-tree based Machine Learning methods
+
+1. Basic decision trees: [5.R](5.R#L1)
+2. Random forest and GBMs with H2O: [5.R](5.R#L40)
+
 
 ## Home Assignment
 
