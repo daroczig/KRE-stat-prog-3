@@ -1,4 +1,4 @@
-This is the R script repository of the "Statisztikai programozás III." course in the 2019/2020 Spring term, part of the [Szociológia MA, "Big Data elemézés" specializáció](https://btk.kre.hu/index.php/szociologia-ma) at [KRE](http://www.kre.hu/english).
+This is the R script repository of the "Statisztikai programozás III." course in the 2020/2019 Spring term, part of the [Szociológia MA, "Big Data elemézés" specializáció](https://btk.kre.hu/index.php/szociologia-ma) at [KRE](http://www.kre.hu/english).
 
 ## Table of Contents
 
@@ -9,13 +9,13 @@ This is the R script repository of the "Statisztikai programozás III." course i
 
 ## Schedule
 
-5 x 3 x 90 mins on February 17, March 2, March 16, April 27 and May 11:
+5 x 3 x 90 mins on February 15, March 1, March 22, April 12, April 26 and May 10:
 
-* 10:00 - 11:30 session 1
-* 11:30 - 12:00 lunch break
-* 12:00 - 13:20 session 2
-* 13:20 - 13:40 coffee break
-* 13:40 - 15:00 session 3
+* 12:00 - 13:30 session 1
+* 13:30 - 14:30 lunch break
+* 14:30 - 16:00 session 2
+* 16:00 - 16:30 coffee break
+* 16:30 - 18:00 session 3
 
 ## Syllabus
 
