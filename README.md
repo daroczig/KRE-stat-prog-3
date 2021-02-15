@@ -17,6 +17,8 @@ This is the R script repository of the "Statisztikai programozás III." course i
 * 16:00 - 16:30 coffee break
 * 16:30 - 18:00 session 3
 
+Please check Neptun / your email inbox for Google Meet URL.
+
 ## Syllabus
 
 Please find in the `syllabus` folder of this repository.
@@ -58,6 +60,35 @@ Find more resources in Jenny Bryan's "[Happy Git and GitHub for the useR](http:/
 ## Class Schedule
 
 Will be updated from week to week.
+
+### Week 1
+
+1. Warm-up exercise and security reminder: [1.R](1.R#L1)
+2. Intro / recap on R and ggplot2 from previous courses by introducing MDS: [1.R](1.R#L23)
+3. Scaling / standardizing variables: [1.R](1.R#L87)
+4. Simpson's paradox: [1.R](1.R#L112)
+5. Intro to `data.table`: [1.R](1.R#L156)
+
+Suggested reading:
+
+* [Introduction to `data.table`](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html)
+* [`data.table` FAQ](https://rdatatable.gitlab.io/data.table/articles/datatable-faq.html)
+* [Database-like ops benchmark](https://h2oai.github.io/db-benchmark/)
+
+Optional homework:
+
+1. Load `bookings` data from http://bit.ly/CEU-R-hotels-2018-prices and the hotel `features` from http://bit.ly/CEU-R-hotels-2018-features
+2. Count the number of 4 stars hotels in Hungary
+3. Compute the average rating of 4 and 5 star hotels in Hungary and Germany
+4. Round up the previously computed average rating to 2 digits
+5. Do we have any bookings in unknown hotels (as per the features dataset)?
+6. Clean up the bookings dataset from bookings from unknown hotels and print the number of remaining bookings
+7. What's the average distance of hotels from the city central in Budapest?
+8. List all neighbourhoods in Budapest
+9. Compute the average distance from the city center for the neighbourhoods in Budapest
+10. Count the number of bookings in Hungary
+11. Count the number of nights booked in Hungary
+12. Compute the average number of nights per booking in Hungary
 
 ## Contact
 
