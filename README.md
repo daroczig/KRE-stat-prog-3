@@ -5,6 +5,9 @@ This is the R script repository of the "Statisztikai programozás III." course i
 * [Syllabus](https://github.com/daroczig/KRE-stat-prog-3#syllabus)
 * [Technical Prerequisites](https://github.com/daroczig/KRE-stat-prog-3#technical-prerequisites)
 * [Class Schedule](https://github.com/daroczig/KRE-stat-prog-3#class-schedule)
+
+    * [Week 1](https://github.com/daroczig/KRE-stat-prog-3#week-1)
+
 * [Contact](https://github.com/daroczig/KRE-stat-prog-3#contacts)
 
 ## Schedule
