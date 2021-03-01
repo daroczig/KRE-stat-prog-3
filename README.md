@@ -12,7 +12,7 @@ This is the R script repository of the "Statisztikai programozás III." course i
 
 ## Schedule
 
-5 x 3 x 90 mins on February 15, March 1, March 22, April 12, April 26 and May 10:
+6 x 3 x 90 mins on February 15, March 1, March 22, April 12, April 26 and May 10:
 
 * 12:00 - 13:30 session 1
 * 13:30 - 14:30 lunch break
