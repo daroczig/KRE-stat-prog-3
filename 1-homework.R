@@ -16,8 +16,10 @@ features[stars == 4 & country == 'Hungary', .N]
 # 7. What's the average distance of hotels from the city central in Budapest?
 # 8. List all neighbourhoods in Budapest
 # 9. Compute the average distance from the city center for the neighbourhoods in Budapest
+features[city=="Budapest",distance_alter]
 
-
+features[city=="Budapest",mean(distance_alter, na.rm=TRUE)]
+features[city=="Budapest", .(avg_dist = mean(distance))
 
 # 10. Count the number of bookings in Hungary
 # 11. Count the number of nights booked in Hungary
