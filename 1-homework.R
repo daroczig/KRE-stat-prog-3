@@ -17,6 +17,8 @@ features[stars == 4 & country == 'Hungary', .N]
 # 8. List all neighbourhoods in Budapest
 # 9. Compute the average distance from the city center for the neighbourhoods in Budapest
 
+str(features)
+features[neighbourhood == 'Budapest', mean(distance)]
 
 
 # 10. Count the number of bookings in Hungary
