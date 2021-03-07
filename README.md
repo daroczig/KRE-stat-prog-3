@@ -7,6 +7,7 @@ This is the R script repository of the "Statisztikai programozás III." course i
 * [Class Schedule](https://github.com/daroczig/KRE-stat-prog-3#class-schedule)
 
     * [Week 1](https://github.com/daroczig/KRE-stat-prog-3#week-1)
+    * [Week 2](https://github.com/daroczig/KRE-stat-prog-3#week-2)
 
 * [Contact](https://github.com/daroczig/KRE-stat-prog-3#contacts)
 
@@ -310,6 +311,11 @@ Although also note (3) the related security risks.
 
 9. Custom login page: http://docs.rstudio.com/ide/server-pro/authenticating-users.html#customizing-the-sign-in-page
 10. Custom port: http://docs.rstudio.com/ide/server-pro/access-and-security.html#network-port-and-address
+
+Optional homework:
+
+1. Use `ggplot2` to provide at least 5 different approaches on visualizing the association between the variables of http://bit.ly/CEU-R-numbers
+2. Participate in the TidyTuesday project: https://github.com/rfordatascience/tidytuesday
 
 ## Contact
 
