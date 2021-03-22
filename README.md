@@ -8,6 +8,7 @@ This is the R script repository of the "Statisztikai programozás III." course i
 
     * [Week 1](https://github.com/daroczig/KRE-stat-prog-3#week-1)
     * [Week 2](https://github.com/daroczig/KRE-stat-prog-3#week-2)
+    * [Week 3](https://github.com/daroczig/KRE-stat-prog-3#week-3)
 
 * [Contact](https://github.com/daroczig/KRE-stat-prog-3#contacts)
 
@@ -316,6 +317,412 @@ Optional homework:
 
 1. Use `ggplot2` to provide at least 5 different approaches on visualizing the association between the variables of http://bit.ly/CEU-R-numbers
 2. Participate in the TidyTuesday project: https://github.com/rfordatascience/tidytuesday
+
+### Week 3
+
+1. Warm-up dataviz exercise on going beyond boxplots [3.R](3.R)
+2. Cloud-infra and job scheduling (see below)
+
+#### Installing packages
+
+1. Installing packages as on a desktop:
+
+    ```sh
+    ## don't do this at this point!
+    ## install.packages('ggplot2')
+    ```
+
+2. Use binary packages instead via apt & Launchpad PPA:
+
+    ```sh
+    sudo add-apt-repository ppa:marutter/rrutter
+    sudo add-apt-repository ppa:marutter/c2d4u
+
+    sudo apt-get update
+    sudo apt-get upgrade
+    sudo apt-get install r-cran-ggplot2
+    ```
+
+3. Ready to use it from R after restarting the session:
+
+    ```r
+    library(ggplot2)
+    ggplot(mtcars, aes(hp)) + geom_histogram()
+    ```
+
+4. Get some real-time data and visualize it:
+
+    1. Install the `devtools` R package and a few others (binary distribution) in the RStudio/Terminal:
+
+        ```sh
+        sudo apt-get install r-cran-devtools r-cran-data.table r-cran-httr r-cran-jsonlite r-cran-data.table r-cran-stringi r-cran-stringr r-cran-glue
+        ```
+
+    2. Switch back to the R console and install the `binancer`  R package from GitHub to interact with crypto exchanges (note the extra dependency to be installed from CRAN):
+
+        ```r
+        install.packages('snakecase')
+        devtools::install_github('daroczig/binancer', upgrade_dependencies = FALSE)
+        ```
+
+    3. First steps with live data: load the `binancer` package and then use the `binance_klines` function to get the last 3 hours of Bitcoin price changes (in USD) with 1-minute granularity -- resulting in an object like:
+
+        ```r
+        > str(klines)
+        Classes ‘data.table’ and 'data.frame':  180 obs. of  12 variables:
+         $ open_time                   : POSIXct, format: "2020-03-08 20:09:00" "2020-03-08 20:10:00" "2020-03-08 20:11:00" "2020-03-08 20:12:00" ...
+         $ open                        : num  8292 8298 8298 8299 8298 ...
+         $ high                        : num  8299 8299 8299 8299 8299 ...
+         $ low                         : num  8292 8297 8297 8298 8296 ...
+         $ close                       : num  8298 8298 8299 8298 8299 ...
+         $ volume                      : num  25.65 9.57 20.21 9.65 24.69 ...
+         $ close_time                  : POSIXct, format: "2020-03-08 20:09:59" "2020-03-08 20:10:59" "2020-03-08 20:11:59" "2020-03-08 20:12:59" ...
+         $ quote_asset_volume          : num  212759 79431 167677 80099 204883 ...
+         $ trades                      : int  371 202 274 186 352 271 374 202 143 306 ...
+         $ taker_buy_base_asset_volume : num  13.43 5.84 11.74 7.12 15.24 ...
+         $ taker_buy_quote_asset_volume: num  111430 48448 97416 59071 126493 ...
+         $ symbol                      : chr  "BTCUSDT" "BTCUSDT" "BTCUSDT" "BTCUSDT" ...
+         - attr(*, ".internal.selfref")=<externalptr>
+        ```
+
+        <details><summary>Click here for the code generating the above ...</summary>
+
+        ```r
+        library(binancer)
+        klines <- binance_klines('BTCUSDT', interval = '1m', limit = 60*3)
+        str(klines)
+        summary(klines$close)
+        ```
+        </details>
+
+    4. Visualize the data, eg on a simple line chart:
+
+        ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/2019-2020/images/binancer-plot-1.png)
+
+        <details><summary>Click here for the code generating the above ...</summary>
+
+        ```r
+        library(ggplot2)
+        ggplot(klines, aes(close_time, close)) + geom_line()
+        ```
+        </details>
+
+    5. Now create a candle chart, something like:
+
+        ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/2019-2020/images/binancer-plot-2.png)
+
+        <details><summary>Click here for the code generating the above ...</summary>
+
+        ```r
+        library(scales)
+        ggplot(klines, aes(open_time)) +
+            geom_linerange(aes(ymin = open, ymax = close, color = close < open), size = 2) +
+            geom_errorbar(aes(ymin = low, ymax = high), size = 0.25) +
+            theme_bw() + theme('legend.position' = 'none') + xlab('') +
+            ggtitle(paste('Last Updated:', Sys.time())) +
+            scale_y_continuous(labels = dollar) +
+            scale_color_manual(values = c('#1a9850', '#d73027')) # RdYlGn
+        ```
+        </details>
+
+    6. Compare prices of 4 currencies (eg ETH, ARK, NEO and IOTA) in the past 24 hours on 15 mins intervals:
+
+        ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/2019-2020/images/binancer-plot-3.png)
+
+        <details><summary>Click here for the code generating the above ...</summary>
+
+        ```r
+        library(data.table)
+        klines <- rbindlist(lapply(
+            c('ETHBTC', 'ARKBTC', 'NEOBTC', 'IOTABTC'),
+            binance_klines,
+            interval = '15m', limit = 4*24))
+        ggplot(klines, aes(open_time)) +
+            geom_linerange(aes(ymin = open, ymax = close, color = close < open), size = 2) +
+            geom_errorbar(aes(ymin = low, ymax = high), size = 0.25) +
+            theme_bw() + theme('legend.position' = 'none') + xlab('') +
+            ggtitle(paste('Last Updated:', Sys.time())) +
+            scale_color_manual(values = c('#1a9850', '#d73027')) +
+             facet_wrap(~symbol, scales = 'free', nrow = 2)
+        ```
+        </details>
+
+    7. Some further useful functions:
+
+        - `binance_ticker_all_prices()`
+        - `binance_coins_prices()`
+        - `binance_credentials` and `binance_balances`
+
+    8. Create an R script that reports and/or plots on some cryptocurrencies, ideas:
+
+        - compute the (relative) change in prices of cryptocurrencies in the past 24 / 168 hours
+        - go back in time 1 / 12 / 24 months and "invest" $1K in BTC and see the value today
+        - write a bot buying and selling crypto on a virtual exchange
+
+#### Create a user for every member of the team
+
+We'll export the list of IAM users from AWS and create a system user for everyone.
+
+1. Attach a newly created IAM EC2 Role (let's call it `ceudataserver`) to the EC2 box and assign 'Read-only IAM access':
+
+    ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/master/images/ec2-new-role.png)
+
+    ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/master/images/ec2-new-role-type.png)
+
+    ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/master/images/ec2-new-role-rights.png)
+
+2. Install AWS CLI tool:
+
+    ```
+    sudo apt update
+    sudo apt install awscli
+    ```
+
+3. List all the IAM users: https://docs.aws.amazon.com/cli/latest/reference/iam/list-users.html
+
+   ```
+   aws iam list-users
+   ```
+
+4. Export the list of users from R:
+
+   ```
+   library(jsonlite)
+   users <- fromJSON(system('aws iam list-users', intern = TRUE))
+   str(users)
+   users[[1]]$UserName
+   ```
+
+5. Create a new system user on the box (for RStudio Server access) for every IAM user:
+
+   ```
+   library(logger)
+   for (user in users[[1]]$UserName) {
+     log_info('Creating {user}')
+     system(sprintf("sudo adduser --disabled-password --quiet --gecos '' %s", user))
+     log_info('Setting password for {user}')
+     system(sprintf("echo '%s:secretpass' | sudo chpasswd", user)) ## note the single quotes + sudo
+   }
+   ```
+
+Note, you may have to temporarily enable passwordless `sudo` for this user :/
+
+```
+kre ALL=(ALL) NOPASSWD:ALL
+```
+
+Check users:
+
+```
+readLines('/etc/passwd')
+```
+
+#### Prepare to schedule R commands
+
+![](https://wiki.jenkins-ci.org/download/attachments/2916393/fire-jenkins.svg)
+
+1. Install Jenkins from the RStudio/Terminal: https://pkg.jenkins.io/debian-stable/
+
+    ```sh
+    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+    echo "deb https://pkg.jenkins.io/debian-stable binary/" | sudo tee -a /etc/apt/sources.list
+    sudo apt update
+    sudo apt install openjdk-8-jdk-headless jenkins ## installing Java as well
+    sudo netstat -tapen | grep java
+    ```
+
+2. Open up port 8080 in the related security group
+3. Access Jenkins from your browser and finish installation
+
+    1. Read the initial admin password from RStudio/Terminal via
+
+        ```sh
+        sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+        ```
+
+    2. Proceed with installing the suggested plugins
+    3. Create your first user (eg `kre`)
+
+4. Optionally update the security backend to use real Unix users for shared access (if users already created):
+
+    ```sh
+    sudo adduser jenkins shadow
+    sudo systemctl restart jenkins
+    ```
+
+5. Test new user access in an incognito window to avoid closing yourself out :)
+
+#### Schedule R commands
+
+Let's schedule a Jenkins job to check on the Bitcoin prices every hour!
+
+1. Log in to Jenkins using your instance's public IP address and port 8080
+2. Use the `kre` username and the secret password
+3. Create a "New Item" (job):
+
+    1. Enter the name of the job: `get current Bitcoin price`
+    2. Pick "Freestyle project"
+    3. Click "OK"
+    4. Add a new "Execute shell" build step
+    5. Enter the below command to look up the most recent BTC price
+
+        ```sh
+        R -e "library(binancer);binance_coins_prices()[symbol == 'BTC', usd]"
+        ```
+
+    6. Run the job
+
+    ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/2019-2020/images/jenkins-errors.png)
+
+4. Debug & figure out what's the problem ...
+5. Install R packages system wide from RStudio/Terminal (more on this later):
+
+    ```sh
+    sudo Rscript -e "library(devtools);with_libpaths(new = '/usr/local/lib/R/site-library', install_github('daroczig/binancer', upgrade_dependencies = FALSE))"
+    ```
+
+6. Rerun the job
+
+    ![](https://raw.githubusercontent.com/daroczig/CEU-R-prod/2018-2019/images/jenkins-success.png)
+
+#### Schedule R scripts
+
+1. Create an R script with the below content and save on the server, eg as `/home/kre/bitcoin-price.R`:
+
+    ```r
+    library(binancer)
+    prices <- binance_coins_prices()
+    sprintf('The current Bitcoin price is: %s', prices[symbol == 'BTC', usd])
+    ```
+
+2. Follow the steps from the [Schedule R commands](#schedule-r-commands) section to create a new Jenkins job, but instead of calling `R -e "..."` in shell step, reference the above R script using `Rscript` instead
+
+```shell
+Rscript /home/kre/de4.R
+```
+
+#### ScheduleR improvements
+
+1. Learn about little R: https://github.com/eddelbuettel/littler
+2. Set up e-mail notifications via eg mailjet.com
+
+    1. Sign up, confirm your e-mail address and domain
+    2. Take a note on the SMTP settings, eg
+
+        * SMTP server: in-v3.mailjet.com
+        * Port: 465
+        * SSL: Yes
+        * Username: ***
+        * Password: ***
+
+    3. Configure Jenkins:
+
+        1. Set up the default FROM e-mail address: jenkins@...
+        2. Search for "Extended E-mail Notification" and configure
+
+           * SMTP Server
+           * Click "Advanced"
+           * Check "Use SMTP Authentication"
+           * Enter User Name from the above steps from SNS
+           * Enter Password from the above steps from SNS
+           * Check "Use SSL"
+           * SMTP port: 465
+
+    5. Set up "Post-build Actions" in Jenkins: Editable Email Notification - read the manual and info popups, configure to get an e-mail on job failures and fixes
+    6. Configure the job to send the whole e-mail body as the deault body template for all outgoing emails
+
+    ```shell
+    ${BUILD_LOG, maxLines=1000}
+    ```
+
+3. Look at other Jenkins plugins, eg the Slack Notifier: https://plugins.jenkins.io/slack
+
+#### Intro to redis
+
+We need a persistent storage for our Jenkins jobs ... let's give a try to a key-value database:
+
+1. Install server
+
+   ```
+   sudo apt install redis-server
+   netstat -tapen | grep LIST
+   ```
+
+2. Install client
+
+    ```
+    sudo Rscript -e "withr::with_libpaths(new = '/usr/local/lib/R/site-library', install.packages('rredis', repos='https://cran.rstudio.com/'))"
+    ```
+
+3. Interact from R
+
+    ```r
+    ## set up and initialize the connection to the local redis server
+    library(rredis)
+    redisConnect()
+
+    ## set/get values
+    redisSet('foo', 'bar')
+    redisGet('foo')
+
+    ## increment and decrease counters
+    redisIncr('counter')
+    redisIncr('counter')
+    redisIncr('counter')
+    redisGet('counter')
+    redisDecr('counter')
+    redisDecr('counter2')
+
+    ## get multiple values at once
+    redisMGet(c('counter', 'counter2'))
+
+    ## list all keys
+    redisKeys()
+    ```
+
+For more examples and ideas, see the [`rredis` package vignette](https://cran.r-project.org/web/packages/rredis/vignettes/rredis.pdf) or try the interactive, genaral (not R-specific) [redis tutorial](https://try.redis.io).
+
+4. Exercises
+
+    - Create a Jenkins job running every minute to cache the most recent Bitcoin and Ethereum prices in Redis
+    - Write an R script in RStudio that can read the Bitcoin and Ethereum prices from the Redis cache
+
+<details><summary>Example solution ...</summary>
+
+```r
+library(rredis)
+redisConnect()
+
+redisSet('price:BTC', binance_klines('BTCUSDT', interval = '1m', limit = 1)$close)
+redisSet('price:ETH', binance_klines('ETHUSDT', interval = '1m', limit = 1)$close)
+
+redisGet('price:BTC')
+redisGet('price:ETH')
+
+redisMGet(c('price:BTC', 'price:ETH'))
+```
+</details>
+
+<details><summary>Example solution using a helper function doing some logging ...</summary>
+
+```r
+store <- function(symbol) {
+  print(paste('Looking up and storing', symbol))
+  redisSet(paste('price', symbol, sep = ':'),
+           binance_klines(paste0(symbol, 'USDT'), interval = '1m', limit = 1)$close)
+}
+
+store('BTC')
+store('ETH')
+
+## list all keys with the "price" prefix and lookup the actual values
+redisMGet(redisKeys('price:*'))
+```
+</details>
+
+#### Amazon Machine Images
+
+Stop the server, create an image, then you can start any number of similar virtual servers based on the snapshot.
 
 ## Contact
 
