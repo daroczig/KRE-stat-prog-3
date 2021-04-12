@@ -1003,6 +1003,7 @@ Let's write an R function to increment counters on the number of transactions pe
     2. Then the R package wrapping the AWS Java SDK and the Kinesis client, then update to the most recent dev version right away:
 
     ```shell
+    sudo R -e 'install.packages("AWR", repos = "https://daroczig.gitlab.io/AWR")'
     sudo R -e "withr::with_libpaths(new = '/usr/local/lib/R/site-library', install.packages('AWR.Kinesis', repos='https://cran.rstudio.com/'))"
     sudo R -e "withr::with_libpaths(new = '/usr/local/lib/R/site-library', devtools::install_github('daroczig/AWR.Kinesis', upgrade = FALSE))"
     ```
