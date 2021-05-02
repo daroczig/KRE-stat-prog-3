@@ -9,6 +9,8 @@ This is the R script repository of the "Statisztikai programozás III." course i
     * [Week 1](https://github.com/daroczig/KRE-stat-prog-3#week-1)
     * [Week 2](https://github.com/daroczig/KRE-stat-prog-3#week-2)
     * [Week 3](https://github.com/daroczig/KRE-stat-prog-3#week-3)
+    * [Week 4](https://github.com/daroczig/KRE-stat-prog-3#week-4)
+    * [Week 5](https://github.com/daroczig/KRE-stat-prog-3#week-5)
 
 * [Contact](https://github.com/daroczig/KRE-stat-prog-3#contacts)
 
@@ -623,8 +625,8 @@ Rscript /home/kre/de4.R
            * SMTP Server
            * Click "Advanced"
            * Check "Use SMTP Authentication"
-           * Enter User Name from the above steps from SNS
            * Enter Password from the above steps from SNS
+           * Enter User Name from the above steps from SNS
            * Check "Use SSL"
            * SMTP port: 465
 
@@ -1192,6 +1194,20 @@ chmod +x app.R
     ```r
     ssm_get_parameter
     ```
+
+#### Scraping data examples
+
+This section intentionally left blank.
+
+### Week 5
+
+* We have 0.42 Bitcoin -- let's report on the value in USD [5.R](5.R#1)
+* Let's report on the value in HUF [5.R](5.R#20)
+* Let's report on the value in HUF for the past 30 days [5.R](5.R#89)
+* Let's report on the value in HUF for the past 30 days (keeping in mind that USDHUF rate also changed) [5.R](5.R#123)
+* Now We have 0.42 Bitcoin and 1.2 Ethereum, let's report on the value in HUF for the past 30 days (eg stacked barchart) [5.R](5.R#170)
+* Instead of using 0.42 Bitcoin and 1.2 Ethereum, let's read the assets from a database [5.R](5.R#212)
+* No static portfolio ... we have been trading in the past 30 days, so let's look at the transactions data [5.R](5.R#274)
 
 ## Contact
 
