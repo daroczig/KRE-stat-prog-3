@@ -1367,6 +1367,16 @@ log_info('My crypto fortune is {forint(BITCOINS * btcusd * usdhuf)}')
 
 Deadline: May 17, 2021 (midnight by CET)
 
+## References
+
+* Binance (cryptocurrency exchange) API: https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md (R implementation available at https://github.com/daroczig/binancer)
+* Foreign exchange rates API, eg https://exchangerate.host
+* "Writing R Extensions" docs: https://cran.r-project.org/doc/manuals/r-release/R-exts.html
+* Hadley Wickham's "R packages" book: http://r-pkgs.had.co.nz
+* Hadley Wickham's "Advanced R" book (1st edition): http://adv-r.had.co.nz/
+* R package tests with GitHub Actions instead of Travis: https://github.com/r-lib/actions/tree/master/examples#quickstart-ci-workflow
+* `pkgdown` package: https://pkgdown.r-lib.org/index.html
+
 ## Contact
 
 File a [GitHub ticket](https://github.com/daroczig/KRE-stat-prog-3/issues).
