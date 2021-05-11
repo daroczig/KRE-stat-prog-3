@@ -1361,8 +1361,8 @@ log_info('My crypto fortune is {forint(BITCOINS * btcusd * usdhuf)}')
 
 1. Create an open-source R package with the `forint` and `get_usdhuf` functions covered in the class and push to a public GitHub repo
 2. Add `convert_usd_to_huf` function that calls `get_usdhuf` to compute and return the provided USD `amount` in HUF (as a number)
-3. Write a function that reverses `huf`, eg call it `unhuf`, so it takes a string (eg `"-0.10 Ft"`) and transforms to a number (eg `-0.10` in this case). Make sure it works with the "big mark" as well (eg for `"100 000.42 Ft"`)
-4. Read http://r-pkgs.had.co.nz/tests.html and write unit tests for `unhuf` to make sure it can parse `4 Ft`, `-2 Ft`, `0.00 Ft`, `-42 Ft`, `3 423.42 Ft`
+3. Write a function that reverses `huf`, eg call it `unhuf`, so it takes a string (eg `"-0.10 Ft"`) and transforms to a number (eg `-0.10` in this case). Make sure it works with the "big mark" as well (eg for `"100,000.42 Ft"`)
+4. Read http://r-pkgs.had.co.nz/tests.html and write unit tests for `unhuf` to make sure it can parse `4 Ft`, `-2 Ft`, `0.00 Ft`, `-42 Ft`, `3,423.42 Ft`
 5. Create a screenshot on the results of running the unit tests and share along with the GitHub repo URL in an email
 
 Deadline: May 17, 2021 (midnight by CET)
